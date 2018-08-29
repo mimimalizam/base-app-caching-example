@@ -14,7 +14,7 @@ blocks:
           - checkout
           - bundle install --path vendor/bundle
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - cache store --key v1-bundle-$CHECKSUM --path vendor
+          - cache store --key v2-bundle-$CHECKSUM --path vendor
 
   - name: "Restoring bundle"
     task:
@@ -22,12 +22,14 @@ blocks:
       - name: RSpec
         commands:
           - checkout
-          - cache restore --key v1-bundle-$CHECKSUM
+          - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
+          - cache restore --key v2-bundle-$CHECKSUM
           - bundle install --path vendor/bundle
 
       - name: Explore files
         commands:
           - checkout
           - ls -lah -1
-          - cache restore --key v1-bundle-$CHECKSUM
+          - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
+          - cache restore --key v2-bundle-$CHECKSUM
           - ls -lah -1
