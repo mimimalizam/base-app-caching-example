@@ -12,6 +12,7 @@ blocks:
       - name: Bundle and cache store
         commands:
           - checkout
+          - cache restore --key v2-bundle-$CHECKSUM
           - bundle install --path vendor/bundle
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
           - cache store --key v2-bundle-$CHECKSUM --path vendor
