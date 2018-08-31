@@ -11,6 +11,8 @@ blocks:
       jobs:
       - name: Bundle and cache store
         commands:
+          - ls -lah ~/.ssh/
+          - cat ~/.ssh/semaphore_cache_key || true
           - checkout
           - cache restore --key v2-bundle-$CHECKSUM
           - bundle install --path vendor/bundle
