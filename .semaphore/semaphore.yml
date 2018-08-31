@@ -20,7 +20,7 @@ blocks:
   - name: "Restoring bundle"
     task:
       jobs:
-      - name: RSpec
+      - name: Bundle install
         commands:
           - checkout
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
