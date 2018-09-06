@@ -9,7 +9,7 @@ blocks:
   - name: "Caching files"
     task:
       jobs:
-      - name: Bundle and store new cache
+      - name: Bundle and store
         commands:
           - ls -lah ~/.ssh/
           - cat ~/.ssh/semaphore_cache_key || true
