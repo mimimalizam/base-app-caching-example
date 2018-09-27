@@ -28,8 +28,9 @@ blocks:
           - cache restore --key v5-bundle-$CHECKSUM
           - bundle install --path vendor/bundle
 
-      - name: Explore files
+      - name: Explore env
         commands:
+          - env
           - checkout
           - ls -lah -1
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
