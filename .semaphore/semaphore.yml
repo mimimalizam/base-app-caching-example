@@ -16,7 +16,7 @@ blocks:
           - checkout
           - bundle install --path vendor/bundle
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - cache store --key v5-bundle-$CHECKSUM --path vendor
+          - cache store --key v6-bundle-$CHECKSUM --path vendor/1
 
   - name: "Restoring bundle"
     task:
@@ -25,7 +25,7 @@ blocks:
         commands:
           - checkout
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - cache restore --key v5-bundle-$CHECKSUM
+          - cache restore --key tmp
           - bundle install --path vendor/bundle
 
       - name: Explore env
