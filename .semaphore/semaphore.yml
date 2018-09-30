@@ -35,4 +35,3 @@ blocks:
           - ls -lah -1
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
           - cache restore --key v5-bundle-$CHECKSUM
-          - ls -lah -1
