@@ -9,18 +9,20 @@ blocks:
   - name: "Clone non-master branch @toolbox"
     task:
       jobs:
-      - name: Bundle and cache store
+      - name: Cache store
         commands:
           - bundle install --path vendor/bundle
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - cache store --key v7-bundle-$CHECKSUM --path vendor
-          - cache store --key v6-bundle-$CHECKSUM --path vendor/1
+          - echo "Try caching dir which is present locally"
+          - cache store --key v7-bundle-$CHECKSUM --path vendor # exists locally
+          - echo "Try caching dir which is already cached"
+          - cache store --key v7-bundle-$CHECKSUM --path vendor # override
+          - echo "Try caching dir which isn't present locally"
+          - cache store --key v6-bundle-$CHECKSUM --path vendor/1 # doesn't exist locally
       - name: Explore env
         commands:
           - env
           - ls -lah -1
-          - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - cache restore --key v6-bundle-$CHECKSUM
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
@@ -28,16 +30,16 @@ blocks:
           - cd ~/.toolbox && source ./install-toolbox && source /usr/bin/libcheckout && cd
           - checkout
 
-  - name: "Restoring bundle"
+  - name: "Cache restore all the things"
     task:
       jobs:
-      - name: Bundle install
+      - name: Cache restore
         commands:
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - cache restore --key tmp
-          - cache restore --key v7-bundle-$CHECKSUM
-          - bundle install --path vendor/bundle
-          - cache store --key v7-bundle-$CHECKSUM --path vendor
+          - echo "Restore non-existent key"
+          - cache restore --key v6-bundle-$CHECKSUM # unavailable in cache repository
+          - echo "Restore available key"
+          - cache restore --key v7-bundle-$CHECKSUM # available in cache repository
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
@@ -45,3 +47,17 @@ blocks:
           - cd ~/.toolbox && source ./install-toolbox && source /usr/bin/libcheckout && cd
           - checkout
 
+  - name: "Cleanup"
+    task:
+      jobs:
+      - name: List & clear
+        commands:
+          - cache list
+          - cache clear
+          - cache clear
+      prologue:
+        commands:
+          - rm -rf ~/.toolbox || true
+          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - cd ~/.toolbox && source ./install-toolbox && source /usr/bin/libcheckout && cd
+          - checkout
