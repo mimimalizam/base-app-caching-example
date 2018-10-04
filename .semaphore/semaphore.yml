@@ -62,6 +62,7 @@ blocks:
       jobs:
       - name: List & clear
         commands:
+          - cache store --key tmp --path .semaphore
           - cache list
           - cache clear
           - cache clear
