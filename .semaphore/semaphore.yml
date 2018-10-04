@@ -26,7 +26,7 @@ blocks:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-rebased --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
@@ -45,7 +45,7 @@ blocks:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-rebased --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
@@ -62,7 +62,7 @@ blocks:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-rebased --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
