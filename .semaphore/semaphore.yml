@@ -26,8 +26,10 @@ blocks:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
-          - cd ~/.toolbox && source ./install-toolbox && source /usr/bin/libcheckout && cd
+          - git clone -b ms/cache-rebased --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - bash ~/.toolbox/install-toolbox
+          - source ~/.toolbox/toolbox
+          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
           - checkout
 
   - name: "Cache restore all the things"
@@ -43,8 +45,10 @@ blocks:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
-          - cd ~/.toolbox && source ./install-toolbox && source /usr/bin/libcheckout && cd
+          - git clone -b ms/cache-rebased --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - bash ~/.toolbox/install-toolbox
+          - source ~/.toolbox/toolbox
+          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
           - checkout
 
   - name: "Cleanup"
@@ -58,6 +62,8 @@ blocks:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
-          - cd ~/.toolbox && source ./install-toolbox && source /usr/bin/libcheckout && cd
+          - git clone -b ms/cache-rebased --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - bash ~/.toolbox/install-toolbox
+          - source ~/.toolbox/toolbox
+          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
           - checkout
