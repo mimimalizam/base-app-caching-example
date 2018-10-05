@@ -78,17 +78,14 @@ blocks:
   - name: "has_key and is_not_empty"
     task:
       jobs:
-      - name: has_key
+      - name: has_key should faile
         commands:
-          - cache store --key tmp --path .semaphore
-          - cache list
-          - cache has_key tmp
-          - cache is_not_empty
           - cache has_key tmp1
-      - name: is_not_empty
+          - name: is_not_empty should fail when cache store is empty
         commands:
           - cache list
           - cache clear
+          - cache list
           - cache is_not_empty
       prologue:
         commands:
@@ -98,3 +95,7 @@ blocks:
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
           - checkout
+          - cache store --key tmp --path .semaphore
+          - cache list
+          - cache has_key tmp
+          - cache is_not_empty
