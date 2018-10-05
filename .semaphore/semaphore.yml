@@ -19,6 +19,7 @@ blocks:
           - cache store --key v7-bundle-$CHECKSUM --path vendor # override
           - echo "Try caching dir which isn't present locally"
           - cache store --key v6-bundle-$CHECKSUM --path vendor/1 # doesn't exist locally
+          - echo
       - name: Explore env
         commands:
           - env
@@ -81,7 +82,7 @@ blocks:
       - name: has_key should faile
         commands:
           - cache has_key tmp1
-          - name: is_not_empty should fail when cache store is empty
+      - name: is_not_empty should fail when cache store is empty
         commands:
           - cache list
           - cache clear
