@@ -14,10 +14,11 @@ blocks:
           - ls -lah ~/.ssh/
           - cat ~/.ssh/semaphore_cache_key || true
           - checkout
-          - cache restore --key v4-bundle-$CHECKSUM
+          - cache list
+          - cache restore --key bundle-$CHECKSUM
           - bundle install --path vendor/bundle
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - cache store --key v4-bundle-$CHECKSUM --path vendor
+          - cache store --key bundle-$CHECKSUM --path vendor
 
   - name: "Restoring bundle"
     task:
@@ -26,8 +27,10 @@ blocks:
         commands:
           - checkout
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - cache restore --key v4-bundle-$CHECKSUM
+          - cache list
+          - cache restore --key bundle-$CHECKSUM
           - bundle install --path vendor/bundle
+          - cache has_key tmp11 || echo $? && cache has_key bundle-$CHECKSUM
 
       - name: Explore files
         commands:
