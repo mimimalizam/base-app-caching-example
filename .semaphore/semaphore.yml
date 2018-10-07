@@ -30,6 +30,7 @@ blocks:
           - echo "Restoring from empty cache"
           - cache clear
           - cache restore --key not-there
+          - echo
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
