@@ -19,7 +19,6 @@ blocks:
           - cache store --key v7-bundle-$CHECKSUM --path vendor # override
           - echo "Try caching dir which isn't present locally"
           - cache store --key v6-bundle-$CHECKSUM --path vendor/1 # doesn't exist locally
-          - echo
       - name: Explore env
         commands:
           - env
