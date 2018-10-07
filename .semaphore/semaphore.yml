@@ -47,7 +47,7 @@ blocks:
           - cache has_key restore-dir-hierarchy
           - cache list
           - cache restore --key restore-dir-hierarchy
-          - ls tmp/first/second/ && echo "yey 🎉"
+          - ls tmp/first/second/ && echo "yey :tada:"
 
   - name: "Explore cache emptying"
     task:
