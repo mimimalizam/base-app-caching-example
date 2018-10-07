@@ -19,18 +19,14 @@ blocks:
           - cache store --key v7-bundle-$CHECKSUM --path vendor # override
           - echo "Try caching dir which isn't present locally"
           - cache store --key v6-bundle-$CHECKSUM --path vendor/1 # doesn't exist locally
-          - echo
-      - name: Explore env
-        commands:
-          - env
-          - ls -lah -1
+          - cache list
       - name: Restore when cache is empty
         commands:
           - cache list
           - echo "Restoring from empty cache"
           - cache clear
+          - cache list
           - cache restore --key not-there
-          - echo
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
@@ -55,6 +51,7 @@ blocks:
           - mkdir tmp && mkdir tmp/first && mkdir tmp/first/second && touch tmp/first/second/example.file
           - cache store --key restore-dir-hierarchy --path tmp/first/second
           - rm -rf tmp
+          - ls tmp/first/second/ || echo "not here atm"
           - cache has_key restore-dir-hierarchy
           - cache list
           - cache restore --key restore-dir-hierarchy
@@ -71,7 +68,7 @@ blocks:
   - name: "Cleanup"
     task:
       jobs:
-      - name: List & clear
+      - name: List & clear & clear when empty
         commands:
           - cache store --key tmp --path .semaphore
           - cache list
@@ -89,7 +86,7 @@ blocks:
   - name: "has_key and is_not_empty"
     task:
       jobs:
-      - name: has_key should faile
+      - name: has_key should fail
         commands:
           - cache has_key tmp1
       - name: is_not_empty should fail when cache store is empty
