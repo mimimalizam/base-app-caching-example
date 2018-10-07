@@ -6,21 +6,27 @@ agent:
     os_image: ubuntu1804
 
 blocks:
+  - name: "Exploring cache"
+    task:
+      jobs:
+      - name: Checking cache list and has_key
+        commands:
+          - cache
+          - cache list
+          - cache has_key tmp11 || echo $? && echo "Command failed"
+
   - name: "Caching files"
     task:
       jobs:
       - name: Bundle and store new cache
         commands:
-          - ls -lah ~/.ssh/
-          - cat ~/.ssh/semaphore_cache_key || true
           - checkout
-          - cache list
+          - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
           - cache restore --key bundle-$CHECKSUM
           - bundle install --path vendor/bundle
-          - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
           - cache store --key bundle-$CHECKSUM --path vendor
 
-  - name: "Restoring bundle"
+  - name: "Cache restore"
     task:
       jobs:
       - name: Bundle install
@@ -29,13 +35,34 @@ blocks:
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
           - cache list
           - cache restore --key bundle-$CHECKSUM
+          - echo "Bundle install should use gems from cache"
           - bundle install --path vendor/bundle
-          - cache has_key tmp11 || echo $? && cache has_key bundle-$CHECKSUM
 
-      - name: Explore files
+      - name: Cache restore preserves dir hierarchy
+        commands:
+          - mkdir tmp && mkdir tmp/first && mkdir tmp/first/second && touch tmp/first/second/example.file
+          - cache store --key restore-dir-hierarchy --path tmp/first/second
+          - rm -rf tmp
+          - ls tmp/first/second/ || echo "not here atm"
+          - cache has_key restore-dir-hierarchy
+          - cache list
+          - cache restore --key restore-dir-hierarchy
+          - ls tmp/first/second/ && echo "yey 🎉"
+
+  - name: "Explore cache emptying"
+    task:
+      jobs:
+      - name: Cache clear etc
         commands:
           - checkout
-          - ls -lah -1
+          - cache list
+          - cache clear
+          - cache list
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
+          - echo "Command restore doesn't fail when key is not found in the cache store"
           - cache restore --key v4-bundle-$CHECKSUM
-          - ls -lah -1
+          - echo "Command has_key fails when key is not found in the cache store"
+          - cache has_key tmp11 || echo $? && echo "Command failed"
+          - echo "Storing cache for next workflow"
+          - bundle install --path vendor/bundle
+          - cache store --key bundle-$CHECKSUM --path vendor
