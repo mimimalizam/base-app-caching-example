@@ -49,6 +49,15 @@ blocks:
           - cache restore --key v6-bundle-$CHECKSUM # unavailable in cache repository
           - echo "Restore available key"
           - cache restore --key v7-bundle-$CHECKSUM # available in cache repository
+      - name: Cache restore && dir hierarchy
+        commands:
+          - mkdir tmp && mkdir tmp/first && mkdir tmp/first/second && touch tmp/first/second/example.file
+          - cache store --key restore-dir-hierarchy --path tmp/first/second
+          - rm -rf tmp
+          - cache has_key restore-dir-hierarchy
+          - cache list
+          - cache restore --key restore-dir-hierarchy
+          - ls tmp/first/second/
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
