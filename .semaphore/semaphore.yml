@@ -42,7 +42,6 @@ blocks:
           - checkout
           - cache list
           - echo "Restoring from empty cache"
-          - cache clear
           - cache list
           - cache restore --key not-there
 
