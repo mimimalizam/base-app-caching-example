@@ -6,104 +6,25 @@ agent:
     os_image: ubuntu1804
 
 blocks:
-  - name: "Clone non-master branch @toolbox"
+  - name: "Listing by date"
     task:
       jobs:
-      - name: Cache store
-        commands:
-          - bundle install --path vendor/bundle
-          - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - echo "Try caching dir which is present locally"
-          - cache store --key v7-bundle-$CHECKSUM --path vendor # exists locally
-          - echo "Try caching dir which is already cached"
-          - cache store --key v7-bundle-$CHECKSUM --path vendor # override
-          - echo "Try caching dir which isn't present locally"
-          - cache store --key v6-bundle-$CHECKSUM --path vendor/1 # doesn't exist locally
-          - cache list
-      - name: Restore when cache is empty
+      - name: Listing by date
         commands:
           - cache list
-          - echo "Restoring from empty cache"
-          - cache clear
+          - cache store --key apple --path spec
           - cache list
-          - cache restore --key not-there
+          - cache store --key banana --path spec
+          - cache list
+          - cache store --key penultimate --path spec
+          - cache list
+          - cache store --key another-apple --path spec
+          - cache list
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - git clone -b ms/cache-cut-listing --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
           - checkout
-
-  - name: "Cache restore all the things"
-    task:
-      jobs:
-      - name: Cache restore
-        commands:
-          - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - echo "Restore non-existent key"
-          - cache restore --key v6-bundle-$CHECKSUM # unavailable in cache repository
-          - echo "Restore available key"
-          - cache restore --key v7-bundle-$CHECKSUM # available in cache repository
-      - name: Cache restore && dir hierarchy
-        commands:
-          - mkdir tmp && mkdir tmp/first && mkdir tmp/first/second && touch tmp/first/second/example.file
-          - cache store --key restore-dir-hierarchy --path tmp/first/second
-          - rm -rf tmp
-          - ls tmp/first/second/ || echo "not here atm"
-          - cache has_key restore-dir-hierarchy
-          - cache list
-          - cache restore --key restore-dir-hierarchy
-          - ls tmp/first/second/
-      prologue:
-        commands:
-          - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
-          - bash ~/.toolbox/install-toolbox
-          - source ~/.toolbox/toolbox
-          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
-          - checkout
-
-  - name: "Cleanup"
-    task:
-      jobs:
-      - name: List & clear & clear when empty
-        commands:
-          - cache store --key tmp --path .semaphore
-          - cache list
-          - cache clear
-          - cache clear
-      prologue:
-        commands:
-          - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
-          - bash ~/.toolbox/install-toolbox
-          - source ~/.toolbox/toolbox
-          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
-          - checkout
-
-  - name: "has_key and is_not_empty"
-    task:
-      jobs:
-      - name: has_key should fail
-        commands:
-          - cache has_key tmp1
-      - name: is_not_empty should fail when cache store is empty
-        commands:
-          - cache list
-          - cache clear
-          - cache list
-          - cache is_not_empty
-      prologue:
-        commands:
-          - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
-          - bash ~/.toolbox/install-toolbox
-          - source ~/.toolbox/toolbox
-          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
-          - checkout
-          - cache store --key tmp --path .semaphore
-          - cache list
-          - cache has_key tmp
-          - cache is_not_empty
