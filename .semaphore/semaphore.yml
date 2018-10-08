@@ -6,6 +6,29 @@ agent:
     os_image: ubuntu1804
 
 blocks:
+  - name: "Listing by date"
+    task:
+      jobs:
+      - name: Listing by date
+        commands:
+          - cache list
+          - cache store --key apple --path spec && sleep 10
+          - cache list
+          - cache store --key banana --path spec && sleep 10
+          - cache list
+          - cache store --key penultimate --path spec && sleep 10
+          - cache list
+          - cache store --key another-apple --path spec
+          - cache list
+      prologue:
+        commands:
+          - rm -rf ~/.toolbox || true
+          - git clone -b ms/cache-cut-listing --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - bash ~/.toolbox/install-toolbox
+          - source ~/.toolbox/toolbox
+          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
+          - checkout
+
   - name: "Clone non-master branch @toolbox"
     task:
       jobs:
@@ -20,7 +43,7 @@ blocks:
           - echo "Try caching dir which isn't present locally"
           - cache store --key v6-bundle-$CHECKSUM --path vendor/1 # doesn't exist locally
           - cache list
-      - name: Restore when cache is empty
+      - name: Restoring from empty cache
         commands:
           - cache list
           - echo "Restoring from empty cache"
@@ -30,7 +53,7 @@ blocks:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - git clone -b ms/cache-cut-listing --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
@@ -59,7 +82,7 @@ blocks:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - git clone -b ms/cache-cut-listing --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
@@ -77,7 +100,7 @@ blocks:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - git clone -b ms/cache-cut-listing --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
@@ -98,7 +121,7 @@ blocks:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-cli-bats --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - git clone -b ms/cache-cut-listing --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
