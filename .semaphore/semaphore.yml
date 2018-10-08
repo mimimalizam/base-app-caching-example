@@ -12,10 +12,11 @@ blocks:
       - name: Bundle and cache store
         commands:
           - checkout
+          - cache restore --key v1-gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock),v1-gems-$SEMAPHORE_GIT_BRANCH-,v1-gems-master-
           - cache restore --key v2-bundle-$CHECKSUM
           - bundle install --path vendor/bundle
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - cache store --key v2-bundle-$CHECKSUM --path vendor
+          - cache store --key v1-gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock) --path vendor/bundle
 
   - name: "Restoring bundle"
     task:
@@ -23,14 +24,5 @@ blocks:
       - name: RSpec
         commands:
           - checkout
-          - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - cache restore --key v2-bundle-$CHECKSUM
+          - cache restore --key v1-gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock),v1-gems-$SEMAPHORE_GIT_BRANCH-,v1-gems-master-
           - bundle install --path vendor/bundle
-
-      - name: Explore files
-        commands:
-          - checkout
-          - ls -lah -1
-          - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - cache restore --key v2-bundle-$CHECKSUM
-          - ls -lah -1
