@@ -20,14 +20,6 @@ blocks:
           - cache list
           - cache store --key another-apple --path spec
           - cache list
-      prologue:
-        commands:
-          - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-fallback-key --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
-          - bash ~/.toolbox/install-toolbox
-          - source ~/.toolbox/toolbox
-          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
-          - checkout
 
   - name: "Clone non-master branch @toolbox"
     task:
@@ -50,14 +42,6 @@ blocks:
           - cache clear
           - cache list
           - cache restore --key not-there
-      prologue:
-        commands:
-          - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-fallback-key --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
-          - bash ~/.toolbox/install-toolbox
-          - source ~/.toolbox/toolbox
-          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
-          - checkout
 
   - name: "Cache restore all the things"
     task:
@@ -79,14 +63,6 @@ blocks:
           - cache list
           - cache restore --key restore-dir-hierarchy
           - ls tmp/first/second/
-      prologue:
-        commands:
-          - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-fallback-key --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
-          - bash ~/.toolbox/install-toolbox
-          - source ~/.toolbox/toolbox
-          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
-          - checkout
 
   - name: "Cleanup"
     task:
@@ -97,14 +73,6 @@ blocks:
           - cache list
           - cache clear
           - cache clear
-      prologue:
-        commands:
-          - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-fallback-key --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
-          - bash ~/.toolbox/install-toolbox
-          - source ~/.toolbox/toolbox
-          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
-          - checkout
 
   - name: "has_key and is_not_empty"
     task:
@@ -117,16 +85,4 @@ blocks:
           - cache list
           - cache clear
           - cache list
-          - cache is_not_empty
-      prologue:
-        commands:
-          - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-fallback-key --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
-          - bash ~/.toolbox/install-toolbox
-          - source ~/.toolbox/toolbox
-          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
-          - checkout
-          - cache store --key tmp --path .semaphore
-          - cache list
-          - cache has_key tmp
           - cache is_not_empty
