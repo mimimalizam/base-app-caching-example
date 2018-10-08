@@ -21,10 +21,9 @@ blocks:
       - name: Bundle and store new cache
         commands:
           - checkout
-          - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - cache restore --key bundle-$CHECKSUM
+          - cache restore --key v1-gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock),v1-gems-$SEMAPHORE_GIT_BRANCH-,v1-gems-master-
           - bundle install --path vendor/bundle
-          - cache store --key bundle-$CHECKSUM --path vendor
+          - cache store --key v1-gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock) --path vendor/bundle
 
   - name: "Cache restore"
     task:
@@ -32,9 +31,8 @@ blocks:
       - name: Bundle install
         commands:
           - checkout
-          - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
           - cache list
-          - cache restore --key bundle-$CHECKSUM
+          - cache restore --key v1-gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock),v1-gems-$SEMAPHORE_GIT_BRANCH-,v1-gems-master-
           - echo "Bundle install should use gems from cache"
           - bundle install --path vendor/bundle
 
