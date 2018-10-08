@@ -11,6 +11,7 @@ blocks:
       jobs:
       - name: Listing by date
         commands:
+          - checkout
           - cache list
           - cache store --key apple --path spec && sleep 10
           - cache list
@@ -26,6 +27,7 @@ blocks:
       jobs:
       - name: Cache store
         commands:
+          - checkout
           - bundle install --path vendor/bundle
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
           - echo "Try caching dir which is present locally"
@@ -37,6 +39,7 @@ blocks:
           - cache list
       - name: Restoring from empty cache
         commands:
+          - checkout
           - cache list
           - echo "Restoring from empty cache"
           - cache clear
@@ -48,6 +51,7 @@ blocks:
       jobs:
       - name: Cache restore
         commands:
+          - checkout
           - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
           - echo "Restore non-existent key"
           - cache restore --key v6-bundle-$CHECKSUM # unavailable in cache repository
@@ -55,6 +59,7 @@ blocks:
           - cache restore --key v7-bundle-$CHECKSUM # available in cache repository
       - name: Cache restore && dir hierarchy
         commands:
+          - checkout
           - mkdir tmp && mkdir tmp/first && mkdir tmp/first/second && touch tmp/first/second/example.file
           - cache store --key restore-dir-hierarchy --path tmp/first/second
           - rm -rf tmp
