@@ -22,7 +22,7 @@ blocks:
         commands:
           - checkout
           - cache list
-          - cache restore --key v1-gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock),v1-gems-$SEMAPHORE_GIT_BRANCH-,v1-gems-master-
+          - cache restore --key v1-gems-$SEMAPHORE_GIT_BRANCH-1,v1-gems-$SEMAPHORE_GIT_BRANCH-,v1-gems-master-
           - bundle install --path vendor/bundle
           - cache store --key v1-gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock) --path vendor/bundle
 
@@ -33,6 +33,7 @@ blocks:
         commands:
           - checkout
           - cache list
+          - cache restore --key v1-gems-$SEMAPHORE_GIT_BRANCH-1,v1-gems-$SEMAPHORE_GIT_BRANCH-1,v1-gems-master-
           - cache restore --key v1-gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock),v1-gems-$SEMAPHORE_GIT_BRANCH-,v1-gems-master-
           - echo "Bundle install should use gems from cache"
           - bundle install --path vendor/bundle
