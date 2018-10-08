@@ -2,9 +2,6 @@ source "https://rubygems.org"
 
 gem "rails", "4.1.1"
 
-# Use PostgreSQL as the database for Active Record
-gem "pg", :require => "pg"
-
 # Compressor of JavaScript assets
 gem "uglifier", ">= 1.3.0"
 
