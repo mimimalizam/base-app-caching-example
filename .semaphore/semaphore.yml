@@ -6,52 +6,30 @@ agent:
     os_image: ubuntu1804
 
 blocks:
-  - name: "Listing by date"
+  - name: "List by date and store all the things"
     task:
       jobs:
-      - name: Listing by date
+      - name: Listing by date and storing
         commands:
           - checkout
           - cache list
-          - cache store --key apple --path spec && sleep 10
+          - cache store apple spec
           - cache list
-          - cache store --key banana --path spec && sleep 10
+          - cache store banana spec
           - cache list
-          - cache store --key penultimate --path spec && sleep 10
+          - cache store penultimate spec
           - cache list
-          - cache store --key another-apple --path spec
+          - cache store another-apple spec
           - cache list
-      prologue:
-        commands:
-          - rm -rf ~/.toolbox || true
-          - git clone -b ms/update-cachecli-interface --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
-          - bash ~/.toolbox/install-toolbox
-          - source ~/.toolbox/toolbox
-          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
-          - checkout
-
-  - name: "Clone non-master branch @toolbox"
-    task:
-      jobs:
-      - name: Cache store
-        commands:
-          - checkout
           - bundle install --path vendor/bundle
-          - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
+          - export CHECKSUM=$(checksum Gemfile.lock)
           - echo "Try caching dir which is present locally"
-          - cache store --key v7-bundle-$CHECKSUM --path vendor # exists locally
+          - cache store v7-bundle-$CHECKSUM vendor # exists locally
           - echo "Try caching dir which is already cached"
-          - cache store --key v7-bundle-$CHECKSUM --path vendor # override
+          - cache store v7-bundle-$CHECKSUM vendor # override
           - echo "Try caching dir which isn't present locally"
-          - cache store --key v6-bundle-$CHECKSUM --path vendor/1 # doesn't exist locally
+          - cache store v6-bundle-$CHECKSUM vendor/1 # doesn't exist locally
           - cache list
-      - name: Restoring from empty cache
-        commands:
-          - checkout
-          - cache list
-          - echo "Restoring from empty cache"
-          - cache list
-          - cache restore --key not-there
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
@@ -59,7 +37,22 @@ blocks:
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
+
+  - name: "Restoring play 1"
+    task:
+      jobs:
+      - name: Restoring non-existent key
+        commands:
           - checkout
+          - cache list
+          - cache restore not-there
+      prologue:
+        commands:
+          - rm -rf ~/.toolbox || true
+          - git clone -b ms/update-cachecli-interface --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - bash ~/.toolbox/install-toolbox
+          - source ~/.toolbox/toolbox
+          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
 
   - name: "Cache restore all the things"
     task:
@@ -67,21 +60,21 @@ blocks:
       - name: Cache restore
         commands:
           - checkout
-          - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
+          - export CHECKSUM=$(checksum Gemfile.lock)
           - echo "Restore non-existent key"
-          - cache restore --key v6-bundle-$CHECKSUM # unavailable in cache repository
+          - cache restore v6-bundle-$CHECKSUM # unavailable in cache repository
           - echo "Restore available key"
-          - cache restore --key v7-bundle-$CHECKSUM # available in cache repository
+          - cache restore v7-bundle-$CHECKSUM # available in cache repository
       - name: Cache restore && dir hierarchy
         commands:
           - checkout
           - mkdir tmp && mkdir tmp/first && mkdir tmp/first/second && touch tmp/first/second/example.file
-          - cache store --key restore-dir-hierarchy --path tmp/first/second
+          - cache store restore-dir-hierarchy tmp/first/second
           - rm -rf tmp
           - ls tmp/first/second/ || echo "not here atm"
           - cache has_key restore-dir-hierarchy
           - cache list
-          - cache restore --key restore-dir-hierarchy
+          - cache restore restore-dir-hierarchy
           - ls tmp/first/second/
       prologue:
         commands:
@@ -90,4 +83,3 @@ blocks:
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
-          - checkout
