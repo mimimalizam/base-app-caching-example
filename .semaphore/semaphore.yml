@@ -21,6 +21,14 @@ blocks:
           - cache list
           - cache store --key another-apple --path spec
           - cache list
+      prologue:
+        commands:
+          - rm -rf ~/.toolbox || true
+          - git clone -b ms/update-cachecli-interface --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - bash ~/.toolbox/install-toolbox
+          - source ~/.toolbox/toolbox
+          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
+          - checkout
 
   - name: "Clone non-master branch @toolbox"
     task:
@@ -44,6 +52,14 @@ blocks:
           - echo "Restoring from empty cache"
           - cache list
           - cache restore --key not-there
+      prologue:
+        commands:
+          - rm -rf ~/.toolbox || true
+          - git clone -b ms/update-cachecli-interface --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - bash ~/.toolbox/install-toolbox
+          - source ~/.toolbox/toolbox
+          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
+          - checkout
 
   - name: "Cache restore all the things"
     task:
@@ -67,3 +83,11 @@ blocks:
           - cache list
           - cache restore --key restore-dir-hierarchy
           - ls tmp/first/second/
+      prologue:
+        commands:
+          - rm -rf ~/.toolbox || true
+          - git clone -b ms/update-cachecli-interface --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - bash ~/.toolbox/install-toolbox
+          - source ~/.toolbox/toolbox
+          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
+          - checkout
