@@ -14,19 +14,18 @@ blocks:
           - checkout
           - cache list
           - cache store apple spec
-          - cache list
           - cache store banana spec
           - cache list
           - cache store penultimate spec
-          - cache list
           - cache store another-apple spec
           - cache list
-          - bundle install --path vendor/bundle
           - export CHECKSUM=$(checksum Gemfile.lock)
+          - cache restore v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM
+          - bundle install --path vendor/bundle
           - echo "Try caching dir which is present locally"
-          - cache store v7-bundle-$CHECKSUM vendor # exists locally
-          - echo "Try caching dir which is already cached"
-          - cache store v7-bundle-$CHECKSUM vendor # override
+          - cache store v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM vendor
+          - echo "Try caching dir which is already cached... It should skip upload"
+          - cache store v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM vendor # skipping upload
           - echo "Try caching dir which isn't present locally"
           - cache store v6-bundle-$CHECKSUM vendor/1 # doesn't exist locally
           - cache list
@@ -46,25 +45,14 @@ blocks:
           - checkout
           - cache list
           - cache restore not-there
-      prologue:
-        commands:
-          - rm -rf ~/.toolbox || true
-          - git clone -b ms/update-cachecli-interface --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
-          - bash ~/.toolbox/install-toolbox
-          - source ~/.toolbox/toolbox
-          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
-
-  - name: "Cache restore all the things"
-    task:
-      jobs:
-      - name: Cache restore
+      - name: Restoring and fallback
         commands:
           - checkout
-          - export CHECKSUM=$(checksum Gemfile.lock)
-          - echo "Restore non-existent key"
-          - cache restore v6-bundle-$CHECKSUM # unavailable in cache repository
-          - echo "Restore available key"
-          - cache restore v7-bundle-$CHECKSUM # available in cache repository
+          - cache list
+          - echo "First key is not found, should fallback to master defined key"
+          - cache restore bundle-gems-11,master
+          - echo "First key is found, it is older then it's match - and it is used"
+          - cache list && cache restore apple,another-apple
       - name: Cache restore && dir hierarchy
         commands:
           - checkout
