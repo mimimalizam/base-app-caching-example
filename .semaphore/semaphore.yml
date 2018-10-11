@@ -9,13 +9,12 @@ blocks:
   - name: "List by date and store all the things"
     task:
       jobs:
-      - name: Listing by date and storing
+      - name: Store and list
         commands:
           - checkout
           - cache list
           - cache store apple spec
           - cache store banana spec
-          - cache list
           - cache store penultimate spec
           - cache store another-apple spec
           - cache list
@@ -25,11 +24,21 @@ blocks:
           - echo "Try caching dir which is present locally"
           - cache store v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM vendor
           - echo "Try caching dir which is already cached... It should skip upload"
-          - cache store v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM vendor # skipping upload
+          - cache store v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM vendor
           - echo "Try caching dir which isn't present locally"
-          - cache store v6-bundle-$CHECKSUM vendor/1 # doesn't exist locally
+          - cache store v6-bundle-$CHECKSUM vendor/1
           - cache list
           - echo
+      - name: Delete
+        commands:
+          - checkout
+          - cache list
+          - mkdir tmp-dir
+          - cache store to-be-deleted tmp-dir
+          - cache has_key to-be-deleted
+          - cache delete to-be-deleted
+          - cache list
+          - cache has_key to-be-deleted || echo "Failed"
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
@@ -54,7 +63,7 @@ blocks:
           - echo "First key is not found, should fallback to master defined key"
           - cache restore bundle-gems-11,master
           - echo "First key is found, it is older then it's match - and it is used"
-          - cache list && cache restore apple,another-apple
+          - cache restore apple,another-apple
       - name: Cache restore && dir hierarchy
         commands:
           - checkout
