@@ -37,6 +37,7 @@ blocks:
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
+          - ssh-agent -k
 
   - name: "Restoring play 1"
     task:
@@ -72,3 +73,4 @@ blocks:
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
+          - ssh-agent -k
