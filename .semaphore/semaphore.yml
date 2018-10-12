@@ -39,10 +39,21 @@ blocks:
           - cache delete to-be-deleted
           - cache list
           - cache has_key to-be-deleted || echo "Failed"
+      - name: Using branch name env var when naming key
+        commands:
+          - checkout
+          - mkdir tmp-dir
+          - cache store tmp-$SEMAPHORE_GIT_BRANCH tmp-dir
+          - cache list
+          - cache has_key tmp-$SEMAPHORE_GIT_BRANCH
+          - rm -rf tmp-dir && cache restore tmp-$SEMAPHORE_GIT_BRANCH
+          - cache delete tmp-$SEMAPHORE_GIT_BRANCH
+          - cache list
+          - cache has_key tmp-$SEMAPHORE_GIT_BRANCH || echo "Failed"
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-ssh-agent --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - git clone -b ms/cache-normalizing-names --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
@@ -78,7 +89,7 @@ blocks:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-ssh-agent --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - git clone -b ms/cache-normalizing-names --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
