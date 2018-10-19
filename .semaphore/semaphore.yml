@@ -6,23 +6,64 @@ agent:
     os_image: ubuntu1804
 
 blocks:
-  - name: "Caching files"
+  - name: "List by date and store all the things"
     task:
       jobs:
-      - name: Bundle and cache store
+      - name: Store and list
         commands:
           - checkout
-          - cache restore --key v1-gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock),v1-gems-$SEMAPHORE_GIT_BRANCH-,v1-gems-master-
-          - cache restore --key v2-bundle-$CHECKSUM
+          - cache list
+          - cache store apple spec
+          - cache store banana spec
+          - cache store penultimate spec
+          - cache store another-apple spec
+          - cache list
+          - export CHECKSUM=$(checksum Gemfile.lock)
+          - cache restore v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM,bundle-$SEMAPHORE_GIT_BRANCH,bundle-
           - bundle install --path vendor/bundle
-          - export CHECKSUM=$(echo $(md5sum Gemfile.lock) | grep -o "^\w*\b")
-          - cache store --key v1-gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock) --path vendor/bundle
+          - echo "Try caching dir which is present locally"
+          - cache store v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM vendor/bundle
+          - echo "Try caching dir which is already cached... It should skip upload"
+          - cache store v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM vendor
+          - echo "Try caching dir which isn't present locally"
+          - cache store v6-bundle-$CHECKSUM vendor/1
+          - cache list
+          - cache usage
+      - name: Delete
+        commands:
+          - checkout
+          - cache list
+          - mkdir tmp-dir && touch tmp-dir/example.file
+          - cache store to-be-deleted tmp-dir
+          - cache has_key to-be-deleted
+          - cache delete to-be-deleted
+          - cache list
+          - cache has_key to-be-deleted || echo "Failed"
 
-  - name: "Restoring bundle"
+  - name: "Restoring play 1"
     task:
       jobs:
-      - name: RSpec
+      - name: Restoring non-existent key
         commands:
           - checkout
-          - cache restore --key v1-gems-$SEMAPHORE_GIT_BRANCH-$(checksum Gemfile.lock),v1-gems-$SEMAPHORE_GIT_BRANCH-,v1-gems-master-
-          - bundle install --path vendor/bundle
+          - cache list
+          - cache restore not-there
+      - name: Restoring and fallback
+        commands:
+          - checkout
+          - cache list
+          - echo "First key is not found, should fallback to master defined key"
+          - cache restore bundle-gems-11,master
+          - echo "First key is found, it is older then it's match - and it is used"
+          - cache restore apple,another-apple
+      - name: Cache restore && dir hierarchy
+        commands:
+          - checkout
+          - mkdir tmp && mkdir tmp/first && mkdir tmp/first/second && touch tmp/first/second/example.file
+          - cache store restore-dir-hierarchy tmp/first/second
+          - rm -rf tmp
+          - ls tmp/first/second/ || echo "not here atm"
+          - cache has_key restore-dir-hierarchy
+          - cache list
+          - cache restore restore-dir-hierarchy
+          - ls tmp/first/second/
