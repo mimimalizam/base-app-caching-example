@@ -29,6 +29,7 @@ blocks:
           - cache store v6-bundle-$CHECKSUM vendor/1
           - cache list
           - cache usage
+          - CACHE_SIZE=5000 cache usage
       - name: Delete
         commands:
           - checkout
