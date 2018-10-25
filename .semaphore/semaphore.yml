@@ -9,6 +9,18 @@ blocks:
   - name: "List by date and store all the things"
     task:
       jobs:
+      - name: Store with deletion
+        commands:
+          - checkout
+          - cache restore v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM
+          - cache list
+          - cache usage
+          - cache delete v10
+          - CACHE_SIZE=93284 cache usage
+          - CACHE_SIZE=93284 cache store v10 vendor/bundle
+          - cache list
+          - cache usage
+          - CACHE_SIZE=93284 cache usage
       - name: Store, list, usage
         commands:
           - checkout
@@ -30,6 +42,7 @@ blocks:
           - cache list
           - cache usage
           - CACHE_SIZE=93284 cache usage
+          - echo
       - name: Delete
         commands:
           - checkout
