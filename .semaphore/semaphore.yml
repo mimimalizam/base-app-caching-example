@@ -49,6 +49,7 @@ blocks:
           - cache list
           - mkdir tmp-dir
           - cache store to-be-deleted tmp-dir
+          - cache list
           - cache has_key to-be-deleted
           - cache delete to-be-deleted
           - cache list
