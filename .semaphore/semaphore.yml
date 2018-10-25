@@ -9,7 +9,7 @@ blocks:
   - name: "List by date and store all the things"
     task:
       jobs:
-      - name: Store and list
+      - name: Store, list, usage
         commands:
           - checkout
           - cache list
@@ -28,7 +28,7 @@ blocks:
           - echo "Try caching dir which isn't present locally"
           - cache store v6-bundle-$CHECKSUM vendor/1
           - cache list
-          - echo
+          - cache usage
       - name: Delete
         commands:
           - checkout
