@@ -11,8 +11,8 @@ blocks:
       jobs:
       - name: Store, list, usage
         commands:
-          - export CHECKSUM=$(checksum Gemfile.lock)
           - checkout
+          - export CHECKSUM=$(checksum Gemfile.lock)
           - cache list
           - cache usage
           - echo "Checking commands when cache is empty"
