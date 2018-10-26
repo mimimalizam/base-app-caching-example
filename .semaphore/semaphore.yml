@@ -9,7 +9,20 @@ blocks:
   - name: "List by date and store all the things"
     task:
       jobs:
-      - name: Store and list
+      - name: Store with deletion
+        commands:
+          - checkout
+          - export CHECKSUM=$(checksum Gemfile.lock)
+          - cache restore v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM
+          - cache list
+          - cache usage
+          - cache delete v10
+          - CACHE_SIZE=93284 cache usage
+          - CACHE_SIZE=93284 cache store v10 vendor/bundle
+          - cache list
+          - cache usage
+          - CACHE_SIZE=93284 cache usage
+      - name: Store, list, usage
         commands:
           - checkout
           - cache list
@@ -19,27 +32,40 @@ blocks:
           - cache store another-apple spec
           - cache list
           - export CHECKSUM=$(checksum Gemfile.lock)
-          - cache restore v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM,bundle-$SEMAPHORE_GIT_BRANCH,bundle-
+          - cache restore v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM
           - bundle install --path vendor/bundle
           - echo "Try caching dir which is present locally"
-          - cache store v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM vendor/bundle
+          - cache store v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM vendor
           - echo "Try caching dir which is already cached... It should skip upload"
           - cache store v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM vendor
           - echo "Try caching dir which isn't present locally"
           - cache store v6-bundle-$CHECKSUM vendor/1
           - cache list
           - cache usage
-          - CACHE_SIZE=5000 cache usage
+          - CACHE_SIZE=93284 cache usage
+          - echo
       - name: Delete
         commands:
           - checkout
           - cache list
-          - mkdir tmp-dir && touch tmp-dir/example.file
+          - mkdir tmp-dir
           - cache store to-be-deleted tmp-dir
+          - cache list
           - cache has_key to-be-deleted
           - cache delete to-be-deleted
           - cache list
           - cache has_key to-be-deleted || echo "Failed"
+      - name: Using branch name env var when naming key
+        commands:
+          - checkout
+          - mkdir tmp-dir
+          - cache store tmp-$SEMAPHORE_GIT_BRANCH tmp-dir
+          - cache list
+          - cache has_key tmp-$SEMAPHORE_GIT_BRANCH
+          - rm -rf tmp-dir && cache restore tmp-$SEMAPHORE_GIT_BRANCH
+          - cache delete tmp-$SEMAPHORE_GIT_BRANCH
+          - cache list
+          - cache has_key tmp-$SEMAPHORE_GIT_BRANCH || echo "Failed"
 
   - name: "Restoring play 1"
     task:
