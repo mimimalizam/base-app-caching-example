@@ -43,17 +43,6 @@ blocks:
           - cache usage
           - CACHE_SIZE=5000 cache usage
           - echo
-      - name: Delete
-        commands:
-          - checkout
-          - cache list
-          - mkdir tmp-dir
-          - cache store to-be-deleted tmp-dir
-          - cache list
-          - cache has_key to-be-deleted
-          - cache delete to-be-deleted
-          - cache list
-          - cache has_key to-be-deleted || echo "Failed"
       - name: Using branch name env var when naming key
         commands:
           - checkout
@@ -69,6 +58,17 @@ blocks:
   - name: "Restoring play 1"
     task:
       jobs:
+      - name: Delete
+        commands:
+          - checkout
+          - cache list
+          - mkdir tmp-dir
+          - cache store to-be-deleted tmp-dir
+          - cache list
+          - cache has_key to-be-deleted
+          - cache delete to-be-deleted
+          - cache list
+          - cache has_key to-be-deleted || echo "Failed"
       - name: Restoring non-existent key
         commands:
           - checkout
