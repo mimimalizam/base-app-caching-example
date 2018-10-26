@@ -17,6 +17,7 @@ blocks:
           - cache usage
           - echo "Checking commands when cache is empty"
           - cache clear
+          - cache clear
           - cache list
           - cache usage
           - cache restore v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM
@@ -31,7 +32,7 @@ blocks:
           - cache store penultimate spec
           - cache store another-apple spec
           - cache usage
-          - CACHE_SIZE=93284 cache usage
+          - CACHE_SIZE=150000 cache usage
           - cache list
           - echo "Try caching dir which is present locally"
           - cache store gemfile Gemfile
@@ -41,8 +42,16 @@ blocks:
           - cache store v6-bundle-$CHECKSUM vendor/1
           - cache list
           - cache usage
-          - CACHE_SIZE=5000 cache usage
-          - echo
+          - CACHE_SIZE=150000 cache usage
+          - echo "Checking automatic key deletion when storing"
+          - dd if=/dev/zero of=tmp.file bs=1M count=10000
+          - CACHE_SIZE=150000 cache store file tmp.file
+          - cache list
+          - CACHE_SIZE=150000 cache usage
+
+  - name: "Stuff"
+    task:
+      jobs:
       - name: Using branch name env var when naming key
         commands:
           - checkout
@@ -54,10 +63,6 @@ blocks:
           - cache delete tmp-$SEMAPHORE_GIT_BRANCH
           - cache list
           - cache has_key tmp-$SEMAPHORE_GIT_BRANCH || echo "Failed"
-
-  - name: "Restoring play 1"
-    task:
-      jobs:
       - name: Delete
         commands:
           - checkout
