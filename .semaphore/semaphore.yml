@@ -16,8 +16,8 @@ blocks:
           - cache list
           - cache usage
           - cache delete v10
-          - CACHE_SIZE=93284 cache usage
-          - CACHE_SIZE=93284 cache store v10 vendor/bundle
+          - CACHE_SIZE=150284 cache usage
+          - CACHE_SIZE=150284 cache store v10 vendor/bundle
           - cache list
           - cache usage
           - CACHE_SIZE=93284 cache usage
@@ -41,7 +41,7 @@ blocks:
           - cache store v6-bundle-$CHECKSUM vendor/1
           - cache list
           - cache usage
-          - CACHE_SIZE=93284 cache usage
+          - CACHE_SIZE=150284 cache usage
           - echo
       - name: Delete
         commands:
