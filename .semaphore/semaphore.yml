@@ -24,25 +24,42 @@ blocks:
       - name: Store, list, usage
         commands:
           - checkout
+          - export CHECKSUM=$(checksum Gemfile.lock)
           - cache list
-          - cache store apple spec
-          - cache store banana spec
+          - cache usage
+          - echo "Checking commands when cache is empty"
+          - cache clear
+          - cache clear
+          - cache list
+          - cache usage
+          - cache restore v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM
+          - cache has_key v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM || echo "Command failed"
+          - cache delete v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM
+          - CACHE_SIZE=100 cache usage
+          - echo "Done with empty cache check"
+          - bundle install --path vendor/bundle
+          - cache store v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM vendor/bundle
+          - cache store apple vendor/bundle
+          - cache store banana vendor/bundle
           - cache store penultimate spec
           - cache store another-apple spec
+          - cache usage
+          - CACHE_SIZE=150000 cache usage
           - cache list
-          - export CHECKSUM=$(checksum Gemfile.lock)
-          - cache restore v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM
-          - bundle install --path vendor/bundle
           - echo "Try caching dir which is present locally"
-          - cache store v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM vendor
+          - cache store gemfile Gemfile
           - echo "Try caching dir which is already cached... It should skip upload"
           - cache store v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM vendor
           - echo "Try caching dir which isn't present locally"
           - cache store v6-bundle-$CHECKSUM vendor/1
           - cache list
           - cache usage
-          - CACHE_SIZE=149604 cache usage
-          - echo
+          - CACHE_SIZE=150000 cache usage
+          - echo "Checking automatic key deletion when storing"
+          - dd if=/dev/zero of=tmp.file bs=1M count=10000
+          - CACHE_SIZE=150000 cache store file tmp.file
+          - cache list
+          - CACHE_SIZE=150000 cache usage
       - name: Delete
         commands:
           - checkout
