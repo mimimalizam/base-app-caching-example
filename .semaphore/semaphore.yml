@@ -60,6 +60,11 @@ blocks:
           - CACHE_SIZE=150000 cache store file tmp.file
           - cache list
           - CACHE_SIZE=150000 cache usage
+          - echo "Checking storing file that is a bit big"
+          - dd if=/dev/zero of=tmp.file bs=1M count=10000
+          - CACHE_SIZE=9000 cache store file tmp.file
+          - cache list
+          - CACHE_SIZE=9000 cache usage
       - name: Delete
         commands:
           - checkout
