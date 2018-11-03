@@ -65,17 +65,6 @@ blocks:
           - CACHE_SIZE=9000 cache store file tmp.file
           - cache list
           - CACHE_SIZE=9000 cache usage
-      - name: Delete
-        commands:
-          - checkout
-          - cache list
-          - mkdir tmp-dir
-          - cache store to-be-deleted tmp-dir
-          - cache list
-          - cache has_key to-be-deleted
-          - cache delete to-be-deleted
-          - cache list
-          - cache has_key to-be-deleted || echo "Failed"
       - name: Using branch name env var when naming key
         commands:
           - checkout
@@ -96,9 +85,20 @@ blocks:
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
           - ssh-agent -k
 
-  - name: "Restoring play 1"
+  - name: "Restore and delete"
     task:
       jobs:
+      - name: Delete
+        commands:
+          - checkout
+          - cache list
+          - mkdir tmp-dir
+          - cache store to-be-deleted tmp-dir
+          - cache list
+          - cache has_key to-be-deleted
+          - cache delete to-be-deleted
+          - cache list
+          - cache has_key to-be-deleted || echo "Failed"
       - name: Restoring non-existent key
         commands:
           - checkout
