@@ -108,6 +108,7 @@ blocks:
         commands:
           - checkout
           - cache list
+          - cache store master README.md
           - echo "First key is not found, should fallback to master defined key"
           - cache restore bundle-gems-11,master
           - echo "First key is found, it is older then it's match - and it is used"
