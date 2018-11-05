@@ -6,12 +6,12 @@ agent:
     os_image: ubuntu1804
 
 blocks:
-  - name: "Explore files"
+  - name: "Cache Ruby installation"
     task:
       jobs:
-      - name: List ssh dir
+      - name: Cache Ruby
         commands:
-          - ls -lah ~/.ssh
-          - cache store ssh-key ~/.ssh/semaphore_cache_key
-          - cache store ssh-key-1 /home/semaphore/.ssh/semaphore_cache_key
-          - cd ~ && pwd
+          - export ruby_version="2.3.1" && export gem_version="2.6.14"
+          - export ruby_archive="$ruby_version.tar.gz"
+          - export ruby_install_path="~/.rbenv/versions/$ruby_version"
+          - env
