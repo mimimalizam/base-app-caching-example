@@ -91,7 +91,7 @@ blocks:
           - CACHE_SIZE=150000 cache usage
           - echo "Checking automatic key deletion when storing"
           - dd if=/dev/zero of=tmp.file bs=1M count=10000
-          - CACHE_SIZE=150000 cache store file tmp.file
+          - CACHE_SIZE=130000 cache store file tmp.file
           - cache list
           - CACHE_SIZE=150000 cache usage
           - echo "Checking storing file that is a bit big"
