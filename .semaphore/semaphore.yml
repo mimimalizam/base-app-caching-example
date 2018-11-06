@@ -14,8 +14,8 @@ blocks:
           - export ruby_version="2.3.1" && export gem_version="2.6.14"
           - export ruby_archive="$ruby_version.tar.gz"
           - export ruby_install_path="~/.rbenv/versions/$ruby_version"
-          - if: |
-              if [ -d ${ruby_install_path} ] \
-              then \
-                echo It-is-here \
+          - >
+              if [ -d ${ruby_install_path} ]
+              then
+                echo It-is-here
               fi
