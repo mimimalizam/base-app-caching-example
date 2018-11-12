@@ -21,8 +21,10 @@ blocks:
       - name: Tests
         commands:
           - cache list
+          - env
           - cache restore repository-$SEMAPHORE_WORKFLOW_ID
           - checkout
+          - env
           - ls
       - name: Docker
         commands:
