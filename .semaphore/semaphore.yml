@@ -6,29 +6,35 @@ agent:
     os_image: ubuntu1804
 
 blocks:
+  - name: "Cache cleanup"
+    task:
+      jobs:
+      - name: Start with clean cache
+        commands:
+          - cache clear
+
   - name: "List by date and store all the things"
     task:
       jobs:
       - name: Cache repository
         commands:
-          - checkout
-          - echo $SEMAPHORE_GIT_REPO_NAME
-          - cd - && cache store repository-$SEMAPHORE_WORKFLOW_ID base-app-caching-example
+          - mkdir -p /home/semaphore/temp_deb_store/partial
+          - cache restore apt-get-packages
+          - sudo chown semaphore -R $HOME/temp_deb_store
+          - sudo apt-get install -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -o Dir::Cache::archives="$HOME/temp_deb_store" libgtk2.0-0
+          - sudo chown $USER -R $HOME/temp_deb_store
+          - cache store apt-get-packages temp_deb_store
 
   - name: "Utilize cache"
     task:
       jobs:
       - name: Tests
         commands:
-          - cache list
-          - env
-          - cache restore repository-$SEMAPHORE_WORKFLOW_ID
-          - checkout
-          - env
-          - ls
+          - cache restore apt-get-packages
+          - sudo chown semaphore -R $HOME/temp_deb_store
+          - sudo apt-get install -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -o Dir::Cache::archives="$HOME/temp_deb_store" libgtk2.0-0
       - name: Docker
         commands:
-          - cache list
-          - cache restore repository-$SEMAPHORE_WORKFLOW_ID
-          - checkout
-          - pwd
+          - cache restore apt-get-packages
+          - sudo chown semaphore -R $HOME/temp_deb_store
+          - sudo apt-get install -y --allow-downgrades --allow-remove-essential --allow-change-held-packages -o Dir::Cache::archives="$HOME/temp_deb_store" libgtk2.0-0
