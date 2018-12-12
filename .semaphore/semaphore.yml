@@ -36,14 +36,27 @@ blocks:
         - name: BUNDLE_PATH
           value: vendor/bundle
       jobs:
-      - name: Bundler 1.16
+      - name: Bundler 1.16 without appending Ruby scope to global path
         commands:
           - checkout
           - cache restore gems-bundler-1-16
           - bundle exec rake
-      - name: Bundler 1.17
+      - name: Bundler 1.16 with appendign Ruby scope
+        commands:
+          - checkout
+          - bundle config global_path_appends_ruby_scope true
+          - cache restore gems-bundler-1-16
+          - bundle exec rake
+      - name: Bundler 1.17 without appending Ruby scope to global path
         commands:
           - checkout
           - gem update bundler
+          - cache restore gems-bundler-1-17
+          - bundle exec rake
+      - name: Bundler 1.17 with appending Ruby scope to GP
+        commands:
+          - checkout
+          - gem update bundler
+          - bundle config global_path_appends_ruby_scope true
           - cache restore gems-bundler-1-17
           - bundle exec rake
