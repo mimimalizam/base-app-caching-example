@@ -9,6 +9,9 @@ blocks:
   - name: "Cache gems"
     dependencies: []
     task:
+      env_vars:
+        - name: BUNDLE_PATH
+          value: vendor/bundle
       jobs:
       - name: Store gems
         commands:
@@ -21,6 +24,9 @@ blocks:
   - name: "Cache restore"
     dependencies: []
     task:
+      env_vars:
+        - name: BUNDLE_PATH
+          value: vendor/bundle
       jobs:
       - name: Bundler 1.16
         commands:
