@@ -13,12 +13,20 @@ blocks:
         - name: BUNDLE_PATH
           value: vendor/bundle
       jobs:
-      - name: Store gems
+      - name: Store gems Bundler 1.16
         commands:
           - checkout
-          - cache restore gems
+          - cache restore gems-bundler-1-16
           - bundle install --path vendor/bundle
-          - cache store gems vendor/bundle
+          - cache store gems-bundler-1-16 vendor/bundle
+          - bundle exec rake
+      - name: Store gems Bundler 1.17
+        commands:
+          - gem update bundler
+          - checkout
+          - cache restore gems-bundler-1-17
+          - bundle install --path vendor/bundle
+          - cache store gems-bundler-1-17 vendor/bundle
           - bundle exec rake
 
   - name: "Cache restore"
@@ -31,11 +39,11 @@ blocks:
       - name: Bundler 1.16
         commands:
           - checkout
-          - cache restore gems
+          - cache restore gems-bundler-1-16
           - bundle exec rake
       - name: Bundler 1.17
         commands:
           - checkout
           - gem update bundler
-          - cache restore gems
+          - cache restore gems-bundler-1-17
           - bundle exec rake
