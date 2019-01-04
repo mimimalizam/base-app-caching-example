@@ -1,4 +1,4 @@
-version: "v1.0"
+version: v1.0
 name: First pipeline example
 agent:
   machine:
@@ -6,57 +6,25 @@ agent:
     os_image: ubuntu1804
 
 blocks:
-  - name: "Cache gems"
-    dependencies: []
+  - name: "First block"
     task:
-      env_vars:
-        - name: BUNDLE_PATH
-          value: vendor/bundle
       jobs:
-      - name: Store gems Bundler 1.16
+      - name: First job
+        commands:
+          - cache list
+          - cache usage
+      jobs:
+      - name: Second job
         commands:
           - checkout
-          - cache restore gems-bundler-1-16
-          - bundle install --path vendor/bundle
-          - cache store gems-bundler-1-16 vendor/bundle
-          - bundle exec rake
-      - name: Store gems Bundler 1.17
-        commands:
-          - gem update bundler
-          - checkout
-          - cache restore gems-bundler-1-17
-          - bundle install --path vendor/bundle
-          - cache store gems-bundler-1-17 vendor/bundle
-          - bundle exec rake
+          - cd ..
+          - cache store repository-$SEMAPHORE_GIT_SHA sem-cache-repo
 
-  - name: "Cache restore"
-    dependencies: []
+  - name: "Second block"
     task:
-      env_vars:
-        - name: BUNDLE_PATH
-          value: vendor/bundle
       jobs:
-      - name: Bundler 1.16 without appending Ruby scope to global path
+      - name: "cat .semaphore/semaphore.yaml"
         commands:
+          - cache restore repository-$SEMAPHORE_GIT_SHA
           - checkout
-          - cache restore gems-bundler-1-16
-          - bundle exec rake
-      - name: Bundler 1.16 with appendign Ruby scope
-        commands:
-          - checkout
-          - bundle config global_path_appends_ruby_scope true
-          - cache restore gems-bundler-1-16
-          - bundle exec rake
-      - name: Bundler 1.17 without appending Ruby scope to global path
-        commands:
-          - checkout
-          - gem update bundler
-          - cache restore gems-bundler-1-17
-          - bundle exec rake
-      - name: Bundler 1.17 with appending Ruby scope to GP
-        commands:
-          - checkout
-          - gem update bundler
-          - bundle config global_path_appends_ruby_scope true
-          - cache restore gems-bundler-1-17
-          - bundle exec rake
+          - cat .semaphore/semaphore.yaml
