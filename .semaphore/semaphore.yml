@@ -13,7 +13,6 @@ blocks:
         commands:
           - cache list
           - cache usage
-      jobs:
       - name: Second job
         commands:
           - checkout
