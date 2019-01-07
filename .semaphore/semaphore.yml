@@ -25,15 +25,15 @@ blocks:
           - cache list
           - cache usage
           - dd if=/dev/zero of=tmp.file bs=1M count=50
-          - cache store tmp-archive tmp.file
+          - cache store tmp-archive-$SEMAPHORE_JOB_ID tmp.file
           - git status
-          - cache store tmp-archive tmp.file && rm -f tmp.file
+          - cache store tmp-archive-$SEMAPHORE_JOB_ID tmp.file && rm -f tmp.file
           - git status && ls -lah
-          - cache restore tmp-archive
+          - cache restore tmp-archive-$SEMAPHORE_JOB_ID
           - git status && ls -lah
       epilogue:
         commands:
-          - cache delete tmp-archive
+          - cache delete tmp-archive-$SEMAPHORE_JOB_ID
 
   - name: "Cache: After cache speed was introduced"
     dependencies: []
@@ -54,15 +54,15 @@ blocks:
           - cache list
           - cache usage
           - dd if=/dev/zero of=tmp.file bs=1M count=50
-          - cache store tmp-archive tmp.file
+          - cache store tmp-archive-$SEMAPHORE_JOB_ID tmp.file
           - git status
-          - cache store tmp-archive tmp.file && rm -f tmp.file
+          - cache store tmp-archive-$SEMAPHORE_JOB_ID tmp.file && rm -f tmp.file
           - git status && ls -lah
-          - cache restore tmp-archive
+          - cache restore tmp-archive-$SEMAPHORE_JOB_ID
           - git status && ls -lah
       epilogue:
         commands:
-          - cache delete tmp-archive
+          - cache delete tmp-archive-$SEMAPHORE_JOB_ID
 
   - name: "Second block"
     dependencies: []
