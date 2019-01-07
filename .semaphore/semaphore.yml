@@ -7,6 +7,7 @@ agent:
 
 blocks:
   - name: "Cache: Before cache speed was introduced"
+    dependencies: []
     task:
       prologue:
         commands:
@@ -26,10 +27,45 @@ blocks:
           - dd if=/dev/zero of=tmp.file bs=1M count=50
           - cache store tmp-archive tmp.file
           - git status
+          - cache store tmp-archive tmp.file && rm -f tmp.file
+          - git status && ls -lah
           - cache restore tmp-archive
+          - git status && ls -lah
+      epilogue:
+        commands:
+          - cache delete tmp-archive
+
+  - name: "Cache: After cache speed was introduced"
+    dependencies: []
+    task:
+      prologue:
+        commands:
+          - rm -rf ~/.toolbox || true
+          - git clone -b ms/cache-speed-metrics --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - bash ~/.toolbox/install-toolbox
+          - source ~/.toolbox/toolbox
+          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
+          - ls -lah
+          - checkout
+          - ls -lah
+      jobs:
+      - name: Cache Store and Restore
+        commands:
+          - cache list
+          - cache usage
+          - dd if=/dev/zero of=tmp.file bs=1M count=50
+          - cache store tmp-archive tmp.file
           - git status
+          - cache store tmp-archive tmp.file && rm -f tmp.file
+          - git status && ls -lah
+          - cache restore tmp-archive
+          - git status && ls -lah
+      epilogue:
+        commands:
+          - cache delete tmp-archive
 
   - name: "Second block"
+    dependencies: []
     task:
       jobs:
       - name: "cat .semaphore/semaphore.yaml"
