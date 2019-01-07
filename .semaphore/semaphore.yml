@@ -55,7 +55,7 @@ blocks:
           - cache usage
           - dd if=/dev/zero of=tmp.file bs=1M count=50
           - cache store tmp-archive-$SEMAPHORE_JOB_ID tmp.file
-          - git status
+          - git status && rm -f 0
           - cache store tmp-archive-$SEMAPHORE_JOB_ID tmp.file && rm -f tmp.file
           - git status && ls -lah
           - cache restore tmp-archive-$SEMAPHORE_JOB_ID
