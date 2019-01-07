@@ -41,7 +41,7 @@ blocks:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-speed-metrics --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - git clone -b ms/cache-speed --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
