@@ -68,7 +68,7 @@ blocks:
     dependencies: []
     task:
       jobs:
-      - name: "cat .semaphore/semaphore.yaml"
+      - name: "cat .semaphore/semaphore.yml"
         commands:
           - checkout
-          - cat .semaphore/semaphore.yaml
+          - cat .semaphore/semaphore.yml
