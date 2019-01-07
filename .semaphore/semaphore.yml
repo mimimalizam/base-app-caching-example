@@ -6,24 +6,33 @@ agent:
     os_image: ubuntu1804
 
 blocks:
-  - name: "First block"
+  - name: "Cache: Before cache speed was introduced"
     task:
+      prologue:
+        commands:
+          - rm -rf ~/.toolbox || true
+          - git clone -b ms/before-cache-speed  --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - bash ~/.toolbox/install-toolbox
+          - source ~/.toolbox/toolbox
+          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
+          - ls -lah
+          - checkout
+          - ls -lah
       jobs:
-      - name: First job
+      - name: Cache Store and Restore
         commands:
           - cache list
           - cache usage
-      - name: Second job
-        commands:
-          - checkout
-          - cd ..
-          - cache store repository-$SEMAPHORE_GIT_SHA sem-cache-repo
+          - dd if=/dev/zero of=tmp.file bs=1M count=50
+          - cache store tmp-archive tmp.file
+          - git status
+          - cache restore tmp-archive
+          - git status
 
   - name: "Second block"
     task:
       jobs:
       - name: "cat .semaphore/semaphore.yaml"
         commands:
-          - cache restore repository-$SEMAPHORE_GIT_SHA
           - checkout
           - cat .semaphore/semaphore.yaml
