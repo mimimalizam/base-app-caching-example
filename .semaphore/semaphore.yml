@@ -6,13 +6,13 @@ agent:
     os_image: ubuntu1804
 
 blocks:
-  - name: "Cache: Before cache speed was introduced"
+  - name: "Cache: PR that removes side effect file"
     dependencies: []
     task:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b ms/before-cache-speed  --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - git clone -b lr/cache-fix  --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
@@ -27,35 +27,6 @@ blocks:
           - dd if=/dev/zero of=tmp.file bs=1M count=50
           - cache store tmp-archive-$SEMAPHORE_JOB_ID tmp.file
           - git status
-          - cache store tmp-archive-$SEMAPHORE_JOB_ID tmp.file && rm -f tmp.file
-          - git status && ls -lah
-          - cache restore tmp-archive-$SEMAPHORE_JOB_ID
-          - git status && ls -lah
-      epilogue:
-        commands:
-          - cache delete tmp-archive-$SEMAPHORE_JOB_ID
-
-  - name: "Cache: After cache speed was introduced"
-    dependencies: []
-    task:
-      prologue:
-        commands:
-          - rm -rf ~/.toolbox || true
-          - git clone -b ms/cache-speed --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
-          - bash ~/.toolbox/install-toolbox
-          - source ~/.toolbox/toolbox
-          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
-          - ls -lah
-          - checkout
-          - ls -lah
-      jobs:
-      - name: Cache Store and Restore
-        commands:
-          - cache list
-          - cache usage
-          - dd if=/dev/zero of=tmp.file bs=1M count=50
-          - cache store tmp-archive-$SEMAPHORE_JOB_ID tmp.file
-          - git status && rm -f 0
           - cache store tmp-archive-$SEMAPHORE_JOB_ID tmp.file && rm -f tmp.file
           - git status && ls -lah
           - cache restore tmp-archive-$SEMAPHORE_JOB_ID
