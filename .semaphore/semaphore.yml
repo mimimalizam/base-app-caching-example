@@ -6,16 +6,18 @@ agent:
     os_image: ubuntu1804
 
 blocks:
-  - name: "Cache: PR that removes side effect file"
+  - name: "Cache: skip verification"
     dependencies: []
     task:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b lr/cache-fix  --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - git clone -b skip-host-verification  --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
+          - rm -rf ~/.ssh/known_hosts
+          - pkill ssh-agent
           - ls -lah
           - checkout
           - ls -lah
@@ -43,3 +45,29 @@ blocks:
         commands:
           - checkout
           - cat .semaphore/semaphore.yml
+
+  - name: "Cache: regular"
+    dependencies: []
+    task:
+      prologue:
+        commands:
+          - rm -rf ~/.ssh/known_hosts
+          - pkill ssh-agent
+          - ls -lah
+          - checkout
+          - ls -lah
+      jobs:
+      - name: Cache Store and Restore
+        commands:
+          - cache list
+          - cache usage
+          - dd if=/dev/zero of=tmp.file bs=1M count=50
+          - cache store tmp-archive-$SEMAPHORE_JOB_ID tmp.file
+          - git status
+          - cache store tmp-archive-$SEMAPHORE_JOB_ID tmp.file && rm -f tmp.file
+          - git status && ls -lah
+          - cache restore tmp-archive-$SEMAPHORE_JOB_ID
+          - git status && ls -lah
+      epilogue:
+        commands:
+          - cache delete tmp-archive-$SEMAPHORE_JOB_ID
