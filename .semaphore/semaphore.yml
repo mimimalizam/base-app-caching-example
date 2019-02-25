@@ -12,6 +12,7 @@ blocks:
       - name: Devide one line command
         commands:
           - >- 
+            sudo apt-get update &&
             sudo apt-get install -y
             postgresql-client-9.4 
             postgresql-9.4
