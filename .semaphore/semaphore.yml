@@ -9,6 +9,15 @@ blocks:
   - name: "Cache is empty check"
     task:
       jobs:
+      - name: Devide one line command
+        commands:
+          - >- sudo apt-get install -y
+            postgresql-client-9.4 
+            postgresql-9.4
+            postgresql-contrib-9.4
+            libpq-dev
+            postgresql-server-dev-9.4
+            
       - name: Check commands when cache is empty
         commands:
           - cache list
