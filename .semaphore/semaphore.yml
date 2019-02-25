@@ -11,7 +11,8 @@ blocks:
       jobs:
       - name: Devide one line command
         commands:
-          - >- sudo apt-get install -y
+          - >- 
+            sudo apt-get install -y
             postgresql-client-9.4 
             postgresql-9.4
             postgresql-contrib-9.4
