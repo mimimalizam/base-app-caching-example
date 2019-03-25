@@ -9,37 +9,9 @@ blocks:
   - name: "Cache is empty check"
     task:
       jobs:
-      - name: Devide one line command as a folded block
+      - name: Test failing pipes
         commands:
-          - >
-            sudo apt-get install -y
-            htop
-            git
-            tmux
-            zsh
-            curl
-            wget
-      - name: Devide one line command as a literal block
-        commands:
-          - |
-            sudo apt-get install -y
-            htop
-            git
-            tmux
-            zsh
-            curl
-            wget
-      - name: Devide one line command as a literal block and remove the trailing line break
-        commands:
-          - >-
-            sudo apt-get install -y
-            htop
-            git
-            tmux
-            zsh
-            curl
-            wget
-#
+          - exit
 #      - name: Check commands when cache is empty
 #        commands:
 #          - cache list
