@@ -12,14 +12,22 @@ blocks:
       - name: first_ssh_key
       - name: second_ssh_key
       jobs:
-      - name: Check keys Git client uses
+      - name: Add both keys to agent
         commands:
           - ssh-add -L
-#          - ssh -vT git@github.com && true
           - chmod 600 ~/.ssh/id_rsa_sem_1 && chmod 600 ~/.ssh/id_rsa_sem_2
           - ssh-add ~/.ssh/id_rsa_sem_1 && ssh-add ~/.ssh/id_rsa_sem_2
           - ssh-add -L
-          - ssh -vT git@github.com
+          - git clone git@github.com:mimimalizam/private_repo_1.git || true
+          - git clone git@github.com:mimimalizam/private_repo_2.git || true
+          - ls
+      - name: Don't add keys to agent
+        commands:
+          - chmod 600 ~/.ssh/id_rsa_sem_1 && chmod 600 ~/.ssh/id_rsa_sem_2
+          - ssh-add -L
+          - GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa_sem_1" git clone git@github.com:mimimalizam/private_repo_1.git
+          - GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa_sem_2" git clone git@github.com:mimimalizam/private_repo_2.git
+          - ls
 #      - name: Check commands when cache is empty
 #        commands:
 #          - cache list
