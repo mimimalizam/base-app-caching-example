@@ -15,9 +15,11 @@ blocks:
       - name: Check keys Git client uses
         commands:
           - ssh-add -L
+#          - ssh -vT git@github.com && true
           - chmod 600 ~/.ssh/id_rsa_sem_1 && chmod 600 ~/.ssh/id_rsa_sem_2
           - ssh-add ~/.ssh/id_rsa_sem_1 && ssh-add ~/.ssh/id_rsa_sem_2
           - ssh-add -L
+          - ssh -vT git@github.com
 #      - name: Check commands when cache is empty
 #        commands:
 #          - cache list
