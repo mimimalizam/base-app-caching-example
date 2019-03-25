@@ -8,10 +8,13 @@ agent:
 blocks:
   - name: "Cache is empty check"
     task:
+      secrets:
+      - name: first_ssh_key
+      - name: second_ssh_key
       jobs:
-      - name: Test failing pipes
+      - name: Check keys Git client uses
         commands:
-          - exit
+          - ssh-add -L
 #      - name: Check commands when cache is empty
 #        commands:
 #          - cache list
