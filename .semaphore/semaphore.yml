@@ -6,28 +6,38 @@ agent:
     os_image: ubuntu1804
 
 blocks:
-  - name: "Cache is empty check"
+  - name: "phpbrew with both --no-progress & forwarding to a file"
+    dependencies: []
     task:
-      secrets:
-      - name: first_ssh_key
-      - name: second_ssh_key
       jobs:
-      - name: Add both keys to agent
+      - name: phpbrew
         commands:
-          - ssh-add -L
-          - chmod 600 ~/.ssh/id_rsa_sem_1 && chmod 600 ~/.ssh/id_rsa_sem_2
-          - ssh-add ~/.ssh/id_rsa_sem_1 && ssh-add ~/.ssh/id_rsa_sem_2
-          - ssh-add -L
-          - git clone git@github.com:mimimalizam/private_repo_1.git || true
-          - git clone git@github.com:mimimalizam/private_repo_2.git || true
-          - ls
-      - name: Don't add keys to agent
+          - phpbrew --no-progress install $PHP_VERSION
+        matrix:
+          - env_var: PHP_VERSION
+            values: ["7.1.17", "7.1.23"]
+
+  - name: "phpbrew with forwarding to a file"
+    dependencies: []
+    task:
+      jobs:
+      - name: phpbrew
         commands:
-          - chmod 600 ~/.ssh/id_rsa_sem_1 && chmod 600 ~/.ssh/id_rsa_sem_2
-          - ssh-add -L
-          - GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa_sem_1" git clone git@github.com:mimimalizam/private_repo_1.git
-          - GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa_sem_2" git clone git@github.com:mimimalizam/private_repo_2.git
-          - ls
+          - phpbrew install $PHP_VERSION >> tmp.dump
+        matrix:
+          - env_var: PHP_VERSION
+            values: ["7.1.17", "7.1.23"]
+
+  - name: "phpbrew without --no-progress & without fwd"
+    dependencies: []
+    task:
+      jobs:
+      - name: phpbrew
+        commands:
+          - phpbrew install $PHP_VERSION
+        matrix:
+          - env_var: PHP_VERSION
+            values: ["7.1.17", "7.1.23"]
 #      - name: Check commands when cache is empty
 #        commands:
 #          - cache list
