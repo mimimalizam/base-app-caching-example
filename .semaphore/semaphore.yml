@@ -19,6 +19,8 @@ blocks:
        commands:
          - cache list
          - cache has_key penultimate || ls -lah
+         - cache has_key penultimate || echo "skipping this command"
+         - cache has_key penultimate || make deploy
          - cache has_key unavailable_key || ls -lah
      - name: Something = branch name
        commands:
