@@ -20,3 +20,7 @@ blocks:
          - cache list
          - cache has_key penultimate || ls -lah
          - cache has_key unavailable_key || ls -lah
+     - name: Something = branch name
+       commands:
+         - if [ "$SEMAPHORE_GIT_BRANCH" = "master"  ]; then echo "it's master branch"; else echo "run this command only if branch is not master"; fi
+         - if [ "$SEMAPHORE_GIT_BRANCH" != "ms/skip-build-step-if-cache-has-key"  ]; then echo "run when branch is not ms/skip-build-step-if-cache-has-key"; fi
