@@ -12,3 +12,11 @@ blocks:
      - name: Cache list
        commands:
          - cache list
+ - name: "Don't run build step based on something and don't fail the job"
+   task:
+     jobs:
+     - name: Something = cache has_key exit status
+       commands:
+         - cache list
+         - cache has_key penultimate || ls -lah
+         - cache has_key unavailable_key || ls -lah
