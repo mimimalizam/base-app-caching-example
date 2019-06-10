@@ -17,6 +17,7 @@ blocks:
      jobs:
      - name: Something = cache has_key exit status
        commands:
+         - ls
          - cache list
          - cache has_key penultimate || ls -lah
          - cache has_key penultimate || echo "skipping this command"
