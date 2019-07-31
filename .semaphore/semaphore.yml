@@ -6,29 +6,14 @@ agent:
     os_image: ubuntu1804
 
 blocks:
-  - name: "Automatic deletion"
+  - name: "Check commands"
     task:
       jobs:
-        - name: Store with deletion
+        - name: Test
           commands:
-            - cache restore v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM
+            - cat /proc/sys/fs/inotify/max_user_watches
+            - echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
+            - sudo sysctl -p
+            - sleep 15
             - cache list
             - cache usage
-            - cache delete v10
-            - bundle install --path vendor/bundle
-            - cache store v7-bundle-$SEMAPHORE_GIT_BRANCH-$CHECKSUM vendor/bundle
-            - CACHE_SIZE=109604 cache usage
-            - CACHE_SIZE=149604 cache store v10 vendor/bundle
-            - cache list
-            - cache usage
-            - CACHE_SIZE=109604 cache usage
-            - dd if=/dev/zero of=tmp.file bs=1M count=70
-            - CACHE_SIZE=110 cache store tmp-file tmp.file
-            - cache list
-            - dd if=/dev/zero of=tmp.file bs=1M count=150
-            - CACHE_SIZE=110 cache store tmp-file tmp.file
-          prologue:
-            commands:
-              - ssh-agent -k
-              - checkout
-              - export CHECKSUM=$(checksum Gemfile.lock)
