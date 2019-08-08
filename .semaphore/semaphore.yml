@@ -41,13 +41,20 @@ blocks:
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
-          - rm -rf ~/.ssh/known_hosts
-          - pkill ssh-agent
-          - ls -lah
-          - checkout
-          - ls -lah
       jobs:
-      - name: Cache Store and Restore /home/something
+      - name: Cache Store and Restore /home/semaphore/to-cache
+        commands:
+          - cache usage
+          - checkout
+          - pwd
+          - dd if=/dev/zero of=tmp.file bs=1M count=50
+          - sudo mkdir -p /home/semaphore/to-cache && sudo mv tmp.file /home/semaphore/to-cache
+          - cache store from-home-semaphore-$SEMAPHORE_JOB_ID /home/semaphore/to-cache
+          - sudo rm -rf /home/semaphore/to-cache
+          - ls -lah /home/semaphore/
+          - cache restore from-home-semaphore-$SEMAPHORE_JOB_ID
+          - ls -lah /home/semaphore/to-cache
+      - name: Cache Store and Restore /var/something
         commands:
           - cache usage
           - dd if=/dev/zero of=tmp.file bs=1M count=50
