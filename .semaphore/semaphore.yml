@@ -7,7 +7,6 @@ agent:
 
 blocks:
   - name: "Cache: skip verification"
-    dependencies: []
     task:
       prologue:
         commands:
@@ -33,9 +32,23 @@ blocks:
           - git status && ls -lah
           - cache restore tmp-archive-$SEMAPHORE_JOB_ID
           - git status && ls -lah
+  - name: "Absolute paths check"
+    task:
+      prologue:
+        commands:
+          - rm -rf ~/.toolbox || true
+          - git clone -b lr/cache-absolute-path  --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - bash ~/.toolbox/install-toolbox
+          - source ~/.toolbox/toolbox
+          - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
+          - rm -rf ~/.ssh/known_hosts
+          - pkill ssh-agent
+          - ls -lah
+          - checkout
+          - ls -lah
+      jobs:
       - name: Cache Store and Restore /home/something
         commands:
-          - cache list
           - cache usage
           - dd if=/dev/zero of=tmp.file bs=1M count=50
           - mkdir /home/to-cache && mv tmp.file /home/to-cache/
@@ -44,38 +57,3 @@ blocks:
           - ls -lah /home
           - cache restore from-home-tmp-archive-$SEMAPHORE_JOB_ID
           - ls -lah /home
-
-  - name: "Second block"
-    dependencies: []
-    task:
-      jobs:
-      - name: "cat .semaphore/semaphore.yml"
-        commands:
-          - checkout
-          - cat .semaphore/semaphore.yml
-
-  - name: "Cache: regular"
-    dependencies: []
-    task:
-      prologue:
-        commands:
-          - rm -rf ~/.ssh/known_hosts
-          - pkill ssh-agent
-          - ls -lah
-          - checkout
-          - ls -lah
-      jobs:
-      - name: Cache Store and Restore
-        commands:
-          - cache list
-          - cache usage
-          - dd if=/dev/zero of=tmp.file bs=1M count=50
-          - cache store tmp-archive-$SEMAPHORE_JOB_ID tmp.file
-          - git status
-          - cache store tmp-archive-$SEMAPHORE_JOB_ID tmp.file && rm -f tmp.file
-          - git status && ls -lah
-          - cache restore tmp-archive-$SEMAPHORE_JOB_ID
-          - git status && ls -lah
-      epilogue:
-        commands:
-          - cache delete tmp-archive-$SEMAPHORE_JOB_ID
