@@ -12,7 +12,7 @@ blocks:
       prologue:
         commands:
           - rm -rf ~/.toolbox || true
-          - git clone -b skip-host-verification  --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
+          - git clone -b lr/cache-absolute-path  --single-branch https://github.com/semaphoreci/toolbox.git ~/.toolbox
           - bash ~/.toolbox/install-toolbox
           - source ~/.toolbox/toolbox
           - echo 'source ~/.toolbox/toolbox' >> ~/.bash_profile
@@ -22,7 +22,7 @@ blocks:
           - checkout
           - ls -lah
       jobs:
-      - name: Cache Store and Restore
+      - name: Cache Store and Restore regular path
         commands:
           - cache list
           - cache usage
@@ -33,9 +33,18 @@ blocks:
           - git status && ls -lah
           - cache restore tmp-archive-$SEMAPHORE_JOB_ID
           - git status && ls -lah
-      epilogue:
+      jobs:
+      - name: Cache Store and Restore /home/something
         commands:
-          - cache delete tmp-archive-$SEMAPHORE_JOB_ID
+          - cache list
+          - cache usage
+          - dd if=/dev/zero of=tmp.file bs=1M count=50
+          - mkdir /home/to-cache && mv tmp.file /home/to-cache/
+          - cache store from-home-$SEMAPHORE_JOB_ID /home/to-cache/tmp.file
+          - rm -rf /home/to-cache
+          - ls -lah /home
+          - cache restore from-home-tmp-archive-$SEMAPHORE_JOB_ID
+          - ls -lah /home
 
   - name: "Second block"
     dependencies: []
