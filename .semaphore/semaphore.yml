@@ -51,9 +51,9 @@ blocks:
         commands:
           - cache usage
           - dd if=/dev/zero of=tmp.file bs=1M count=50
-          - mkdir /home/to-cache && mv tmp.file /home/to-cache/
-          - cache store from-home-$SEMAPHORE_JOB_ID /home/to-cache/tmp.file
-          - rm -rf /home/to-cache
-          - ls -lah /home
-          - cache restore from-home-tmp-archive-$SEMAPHORE_JOB_ID
-          - ls -lah /home
+          - mkdir -p /var/to-cache && mv tmp.file /var/to-cache/
+          - cache store from-var-$SEMAPHORE_JOB_ID /var/to-cache/tmp.file
+          - rm -rf /var/to-cache
+          - ls -lah /var
+          - cache restore from-var-$SEMAPHORE_JOB_ID
+          - ls -lah /var
