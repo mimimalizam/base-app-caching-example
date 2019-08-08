@@ -33,7 +33,6 @@ blocks:
           - git status && ls -lah
           - cache restore tmp-archive-$SEMAPHORE_JOB_ID
           - git status && ls -lah
-      jobs:
       - name: Cache Store and Restore /home/something
         commands:
           - cache list
